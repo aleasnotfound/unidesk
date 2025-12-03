@@ -33,3 +33,6 @@ CMD php artisan serve --host=0.0.0.0 --port=8000
 
 # Jalankan Apache
 CMD ["apache2-foreground"]
+
+#Permission folder storage / bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
