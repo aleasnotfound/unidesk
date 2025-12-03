@@ -1,23 +1,30 @@
-# Gunakan PHP + Apache
-FROM php:8.2-apache
+# Base image
+FROM php:8.3-fpm
 
-# Install dependency
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    libzip-dev unzip git curl \
-    && docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl bcmath \
-    && a2enmod rewrite
+    git unzip libpq-dev libonig-dev libzip-dev curl
 
-# Set working directory
-WORKDIR /var/www/html
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql mbstring zip
 
-# Copy source code
-COPY . .
-
-# Install composer
+# Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Install dependencies Laravel
+# Set working directory
+WORKDIR /var/www
+
+# Copy project files
+COPY . .
+
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions storage & cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Set permissions
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+
+# Expose port
+EXPOSE 9000
+
+# Start PHP-FPM
+CMD ["php-fpm"]
