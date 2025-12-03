@@ -30,3 +30,6 @@ EXPOSE 8000
 
 # Start Laravel
 CMD php artisan serve --host=0.0.0.0 --port=8000
+
+# Jalankan Apache
+CMD ["apache2-foreground"]
